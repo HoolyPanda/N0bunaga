@@ -44,7 +44,6 @@ async def download(context:commands.context, url):
     yt_dlOpts = {'format': 'bestaudio/mp3',
             'audio-quality': '9',
             'audio-format': 'mp3',
-            'extract-audio': True,
             'outtmpl': f'{os.getcwd()}/downloads/{id}.%(title)s.%(ext)s'
             }
     with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
