@@ -55,8 +55,8 @@ class MusicPlayer():
         self.isPaused = True
         self.voiceClient.stop()
         self.currentTrack = ''
-        self.stopPlaying = False
-        self.isPaused = False
+        # self.stopPlaying = False
+        # self.isPaused = False
 
     def clearQueue(self):
         self.stop()
