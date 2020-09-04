@@ -7,6 +7,8 @@ from musicPlayer import MusicPlayer
 import requests
 import bs4
 
+# TODO: rewrite to wavelink
+
 token = open(f'./token.cred').readline()
 testUrl = f'https://www.youtube.com/watch?v=02Tim9kmb3I'
 testId = 698604865634435202
@@ -39,15 +41,29 @@ async def ping(context):
 @client.command(pass_context=True)
 async def download(context:commands.context, url):
     id = len(os.listdir(musicFolder))
-    yt_dlOpts = {'format': 'bestaudio/mp3','outtmpl': f'{os.getcwd()}/downloads/{id}.%(title)s.%(ext)s'}
+    yt_dlOpts = {'format': 'bestaudio/mp3',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+            'audio-quality': '9',
+            'audio-format': 'mp3',
+            'extract-audio': True,
+            'outtmpl': f'{os.getcwd()}/downloads/{id}.%(title)s.%(ext)s'
+            }
     with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
-        ydl.download([url]) 
+        ydl.download([url])
+        await context.channel.send(content= f'track ready')
     pass
 
 @client.command(pass_context=True)
 async def play(context:commands.context):
     voiceChannel = client.get_channel(context.message.author.voice.channel.id)
-    vc = await voiceChannel.connect()
+    try:
+        vc = await voiceChannel.connect()
+    except Exception as e:
+        pass
     global mP
     mP = MusicPlayer(vc)
     mP.play()
@@ -63,11 +79,11 @@ async def resume(context: commands.context):
 
 @client.command(pass_context=True)
 async def stop(context: commands.context):
-    mP.stop()
+    await mP.stop()
 
 @client.command(pass_context=True)
 async def next(context: commands.context):
-    mP.next()
+    await mP.next()
 
 @client.command(pass_context=True)
 async def clear(context: commands.context):
