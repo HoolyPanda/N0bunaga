@@ -8,7 +8,6 @@ import requests
 import bs4
 
 
-
 token = open(f'./token.cred').readline()
 testUrl = f'https://www.youtube.com/watch?v=02Tim9kmb3I'
 testId = 698604865634435202
@@ -56,10 +55,11 @@ async def play(context:commands.context):
     voiceChannel = client.get_channel(context.message.author.voice.channel.id)
     try:
         vc = await voiceChannel.connect()
+        global mP
         mP = MusicPlayer(vc)
     except Exception as e:
         pass
-    # global mP
+    global mP
     mP.play()
 
 @client.command(pass_context=True)
