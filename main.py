@@ -42,11 +42,6 @@ async def ping(context):
 async def download(context:commands.context, url):
     id = len(os.listdir(musicFolder))
     yt_dlOpts = {'format': 'bestaudio/mp3',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
             'audio-quality': '9',
             'audio-format': 'mp3',
             'extract-audio': True,
@@ -79,11 +74,12 @@ async def resume(context: commands.context):
 
 @client.command(pass_context=True)
 async def stop(context: commands.context):
-    await mP.stop()
+    mP.stop()
+    await mP.voiceClient.disconnect()
 
 @client.command(pass_context=True)
 async def next(context: commands.context):
-    await mP.next()
+    mP.next()
 
 @client.command(pass_context=True)
 async def clear(context: commands.context):

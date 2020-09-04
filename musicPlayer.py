@@ -45,14 +45,13 @@ class MusicPlayer():
         self.voiceClient.play(self.currentAudioSource)
         self.isPaused = False
     
-    async def stop(self):
+    def stop(self):
         self.stopPlaying = True
         self.isPaused = True
         self.voiceClient.stop()
         self.currentTrack = ''
         self.stopPlaying = False
         self.isPaused = False
-        await self.voiceClient.disconnect()
 
     def clearQueue(self):
         self.stop()
