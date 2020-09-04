@@ -7,7 +7,7 @@ from musicPlayer import MusicPlayer
 import requests
 import bs4
 
-# TODO: rewrite to wavelink
+
 
 token = open(f'./token.cred').readline()
 testUrl = f'https://www.youtube.com/watch?v=02Tim9kmb3I'
@@ -56,10 +56,10 @@ async def play(context:commands.context):
     voiceChannel = client.get_channel(context.message.author.voice.channel.id)
     try:
         vc = await voiceChannel.connect()
+        mP = MusicPlayer(vc)
     except Exception as e:
         pass
-    global mP
-    mP = MusicPlayer(vc)
+    # global mP
     mP.play()
 
 @client.command(pass_context=True)
