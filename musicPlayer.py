@@ -13,15 +13,17 @@ class MusicPlayer():
         self.queueThread: Thread
         self.isPaused = False
         self.stopPlaying = False
+        self.queuePosition = 0
     
     def __PlayQueue(self):
-        while len(self.queue) > 0 and not self.stopPlaying:
+        while len(self.queue) > self.queuePosition and not self.stopPlaying:
             if not self.voiceClient.is_playing() and not self.isPaused:
                 try:
-                    self.queue.pop(0)
-                    os.remove(f'{self.musicFolder}/{self.currentTrack}')
+                    # self.queue.pop(0)
+                    self.queuePosition += 1
+                    # os.remove(f'{self.musicFolder}/{self.currentTrack}')
                     if len(self.queue) > 0:
-                        self.currentTrack = self.queue[0]
+                        self.currentTrack = self.queue[self.queuePosition]
                         self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
                         if not self.voiceClient.is_playing():
                             self.voiceClient.play(self.currentAudioSource)
@@ -29,13 +31,16 @@ class MusicPlayer():
                     break
 
     def play(self):
-        if len(self.queue) > 0:
-            self.currentTrack = self.queue[0]
+        if len(self.queue) > self.queuePosition:
+            self.currentTrack = self.queue[self.queuePosition]
             self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
             if not self.voiceClient.is_playing():
                 self.voiceClient.play(self.currentAudioSource)
                 self.queueThread = Thread(target=self.__PlayQueue)
                 self.queueThread.start()
+                return True
+        else:
+            return False
 
     def pause(self):
         self.isPaused = True
@@ -63,6 +68,8 @@ class MusicPlayer():
 
     def updateQueue(self):
         self.queue = []
+        self.queuePosition = 0
+        self.queue = os.listdir(self.musicFolder)
         pass
 
     def deleteTrack(self, id):
@@ -72,5 +79,6 @@ class MusicPlayer():
 
     def next(self):
         self.stop()
-        self.queue.pop(0)
-        self.play()
+        # self.queue.pop(0)
+        self.queuePosition += 1
+        return self.play()

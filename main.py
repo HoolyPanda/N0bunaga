@@ -18,7 +18,7 @@ currentTrack = ''
 musicFolder = f'{os.getcwd()}/downloads'
 __musicPlayer: Thread
 mP: MusicPlayer
-mP = None
+mP = MusicPlayer(None)
 musicQueue = []
 domain = 'live'
 
@@ -47,6 +47,7 @@ async def download(context:commands.context, url):
             }
     with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
         ydl.download([url])
+        mP.updateQueue()
         await context.channel.send(content= f'track ready')
     pass
 
@@ -56,11 +57,14 @@ async def play(context:commands.context):
     try:
         vc = await voiceChannel.connect()
         global mP
-        mP = MusicPlayer(vc)
+        mP.voiceClient = vc
     except Exception as e:
         pass
-    global mP
-    mP.play()
+    # global mP
+    if not mP.play():
+        mP.updateQueue()
+        await context.channel.send(content=f'Больше нет треков')
+
 
 @client.command(pass_context=True)
 async def pause(context: commands.context):
@@ -78,7 +82,10 @@ async def stop(context: commands.context):
 
 @client.command(pass_context=True)
 async def next(context: commands.context):
-    mP.next()
+    if not mP.next():
+        mP.clearQueue()
+        mP.updateQueue()
+        await context.channel.send(content=f'Больше нет треков')
 
 @client.command(pass_context=True)
 async def clear(context: commands.context):
