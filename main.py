@@ -55,7 +55,8 @@ async def download(context:commands.context, url):
                 captcha_answer = input('Число с картинки: ')
         tr = re.findall('\d+', f'{url}')
         track = clnt.tracks([tr[1]])[0]
-        clnt.tracks([tr[1]])[0].download(f'./downloads/{id}.{track.title}.mp3')
+        clnt.tracks([tr[1]])[0].download(f'{musicFolder}/{id}.{track.title}.mp3')
+        mP.updateQueue()
         await context.channel.send(content= f'track ready')
         pass
     else:
