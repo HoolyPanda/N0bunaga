@@ -5,7 +5,10 @@ from threading import Thread
 from discord.ext import commands
 from musicPlayer import MusicPlayer
 import requests
+import yandex_music
+from yandex_music import Client
 import bs4
+import re
 
 
 token = open(f'./token.cred').readline()
@@ -40,16 +43,32 @@ async def ping(context):
 @client.command(pass_context=True)
 async def download(context:commands.context, url):
     id = len(os.listdir(musicFolder))
-    yt_dlOpts = {'format': 'bestaudio/mp3',
-            'audio-quality': '9',
-            'audio-format': 'mp3',
-            'outtmpl': f'{os.getcwd()}/downloads/{id}.%(title)s.%(ext)s'
-            }
-    with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
-        ydl.download([url])
-        mP.updateQueue()
+    if 'https://music.yandex.ru' in url:
+        clnt= captcha_key = captcha_answer = None
+        while not clnt:
+            try:
+                clnt = Client.from_credentials(open('./login.cred').readline(), open('./password.cred').readline(), captcha_answer, captcha_key)
+            except yandex_music.exceptions.Captcha as e:
+                e.captcha.download('captcha.png')
+
+                captcha_key = e.captcha.x_captcha_key
+                captcha_answer = input('Число с картинки: ')
+        tr = re.findall('\d+', f'{url}')
+        track = clnt.tracks([tr[1]])[0]
+        clnt.tracks([tr[1]])[0].download(f'./downloads/{id}.{track.title}.mp3')
         await context.channel.send(content= f'track ready')
-    pass
+        pass
+    else:
+        yt_dlOpts = {'format': 'bestaudio/mp3',
+                'audio-quality': '9',
+                'audio-format': 'mp3',
+                'outtmpl': f'{os.getcwd()}/downloads/{id}.%(title)s.%(ext)s'
+                }
+        with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
+            ydl.download([url])
+            mP.updateQueue()
+            await context.channel.send(content= f'track ready')
+        pass
 
 @client.command(pass_context=True)
 async def play(context:commands.context):

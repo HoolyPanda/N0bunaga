@@ -1,6 +1,7 @@
 import discord
 import os
 from threading import Thread
+import yandex_music
 
 class MusicPlayer():
     def __init__(self, voiceClient: discord.VoiceClient):
@@ -19,9 +20,7 @@ class MusicPlayer():
         while len(self.queue) > self.queuePosition and not self.stopPlaying:
             if not self.voiceClient.is_playing() and not self.isPaused:
                 try:
-                    # self.queue.pop(0)
                     self.queuePosition += 1
-                    # os.remove(f'{self.musicFolder}/{self.currentTrack}')
                     if len(self.queue) > 0:
                         self.currentTrack = self.queue[self.queuePosition]
                         self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
@@ -57,8 +56,6 @@ class MusicPlayer():
         self.isPaused = True
         self.voiceClient.stop()
         self.currentTrack = ''
-        # self.stopPlaying = False
-        # self.isPaused = False
 
     def clearQueue(self):
         self.stop()
