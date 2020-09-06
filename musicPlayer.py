@@ -58,7 +58,10 @@ class MusicPlayer():
         self.currentTrack = ''
 
     def clearQueue(self):
-        self.stop()
+        try:
+            self.stop()
+        except Exception as e:
+            pass
         for t in self.queue:
             os.remove(f'{self.musicFolder}/{t}')
         self.queue = []

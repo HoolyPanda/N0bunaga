@@ -53,11 +53,21 @@ async def download(context:commands.context, url):
 
                 captcha_key = e.captcha.x_captcha_key
                 captcha_answer = input('Число с картинки: ')
-        tr = re.findall('\d+', f'{url}')
-        track = clnt.tracks([tr[1]])[0]
-        clnt.tracks([tr[1]])[0].download(f'{musicFolder}/{id}.{track.title}.mp3')
-        mP.updateQueue()
-        await context.channel.send(content= f'track ready')
+        if 'track' in url:
+            tr = re.findall('\d+', f'{url}')
+            track = clnt.tracks([tr[1]])[0]
+            clnt.tracks([tr[1]])[0].download(f'{musicFolder}/{id}.{track.title}.mp3')
+            mP.updateQueue()
+            await context.channel.send(content= f'track ready')
+        else: 
+            album = re.findall('\d+', f'{url}')
+            album = clnt.albumsWithTracks(album[0])
+            await context.channel.send(content= f'Processing album {album.title}')
+            for volume in album.volumes:
+                for track in volume:
+                    id = len(os.listdir(musicFolder))
+                    track.download(f'{musicFolder}/{id}.{track.title}.mp3')
+            await context.channel.send(content= f'Album ready')
         pass
     else:
         yt_dlOpts = {'format': 'bestaudio/mp3',
@@ -80,7 +90,7 @@ async def play(context:commands.context):
         mP.voiceClient = vc
     except Exception as e:
         pass
-    # global mP
+    mP.updateQueue()
     if not mP.play():
         mP.updateQueue()
         await context.channel.send(content=f'Больше нет треков')
