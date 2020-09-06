@@ -10,7 +10,7 @@ class MusicPlayer():
         self.currentAudioSource = None
         self.musicFolder = f'{os.getcwd()}/downloads'
         self.queueBlacklist = []
-        self.queue = os.listdir(self.musicFolder)
+        self.queue = self.updateQueue()
         self.queueThread: Thread
         self.isPaused = False
         self.stopPlaying = False
