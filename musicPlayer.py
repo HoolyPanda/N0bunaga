@@ -18,7 +18,7 @@ class MusicPlayer():
     
     def __PlayQueue(self):
         while len(self.queue) > self.queuePosition and not self.stopPlaying:
-            # self.queue = os.listdir(self.musicFolder)
+            self.queue = os.listdir(self.musicFolder)
             if not self.voiceClient.is_playing() and not self.isPaused:
                 try:
                     self.queuePosition += 1
