@@ -87,7 +87,9 @@ async def download(context:commands.context, url):
             await context.channel.send(content= f'Processing tack') 
             def test():
                 ydl.download([url])
-            Thread(target=test).join()
+            t = Thread(target=test)
+            t.start()
+            t.join()
             mP.updateQueue()
             await context.channel.send(content= f'track ready')
         pass
