@@ -170,7 +170,6 @@ async def manga(context: commands.context):
 
 @client.command(pass_context=True)
 async def anime(context: commands.context):
-    # animeDomain = 'live'
     req = requests.get(f'https://findanime.{animeDomain}/internal/random')
     await context.channel.send(content= req.url)
 
@@ -179,14 +178,14 @@ async def get_boobs(context: commands.context):
     req = requests.get(f'https://tits-guru.com/randomTits')
 
 @client.command(pass_context=True)
-async def mangaDomain(context: commands.context, dmn):
+async def setMangaDomain(context: commands.context, dmn):
     mangaDomain = dmn
     await context.channel.send(content= f'https://readmanga.{mangaDomain}')
 
 @client.command(pass_context=True)
-async def animeDomain(context: commands.context, dmn):
+async def setAnimeDomain(context: commands.context, dmn):
     animeDomain = dmn
-    await context.channel.send(content= f'https://readmanga.{animeDomain}')
+    await context.channel.send(content= f'https://findanime.{animeDomain}')
 
 @client.command(pass_context=True)
 async def torture(context:commands.context, name):
