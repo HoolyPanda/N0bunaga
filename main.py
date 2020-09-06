@@ -148,10 +148,10 @@ async def ls(context: commands.context):
     if mP is None:
         await context.channel.send(content=f'Очередь пуста')
     else:
+        mP.updateQueue()
         if len(mP.queue) == 0:
             await context.channel.send(content=f'Очередь пуста')
         else:
-            mP.updateQueue()
             for i in mP.queue:
                 msg += f'{i}\n'
             await context.channel.send(content=str(msg))
