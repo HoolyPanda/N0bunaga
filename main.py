@@ -43,7 +43,7 @@ async def ping(context):
 
 @client.command(pass_context=True)
 async def download(context:commands.context, url):
-    def _download(url):
+    async def _download(url):
         id = len(os.listdir(musicFolder))
         if 'https://music.yandex.ru' in url:
             clnt= captcha_key = captcha_answer = None
