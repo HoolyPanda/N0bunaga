@@ -81,7 +81,8 @@ class MusicPlayer():
     def updateQueue(self):
         self.queue = []
         # self.queuePosition = 0
-        self.queue = os.listdir(self.musicFolder).reverse()
+        self.queue = os.listdir(self.musicFolder)
+        self.queue = self.queue.reverse()
         pass
 
     def deleteTrack(self, id):
