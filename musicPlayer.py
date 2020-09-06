@@ -84,6 +84,7 @@ class MusicPlayer():
 
     def next(self):
         self.stop()
+        self.updateQueue()
         # self.queue.pop(0)
-        self.queuePosition += 1
+        # self.queuePosition += 1
         return self.play()
