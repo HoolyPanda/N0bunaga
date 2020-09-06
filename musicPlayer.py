@@ -55,7 +55,7 @@ class MusicPlayer():
     
     def stop(self):
         self.stopPlaying = True
-        self.isPaused = True
+        # self.isPaused = True
         self.voiceClient.stop()
         self.currentTrack = ''
 
@@ -86,5 +86,5 @@ class MusicPlayer():
         self.stop()
         self.updateQueue()
         # self.queue.pop(0)
-        self.queuePosition += 1
+        # self.queuePosition += 1
         return self.play()
