@@ -16,6 +16,13 @@ class MusicPlayer():
         self.stopPlaying = False
         self.queuePosition = 0
     
+    def _setUpTrack(self):
+        self.currentTrack = self.queue[self.queuePosition]
+        self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
+        if not self.voiceClient.is_playing():
+            self.voiceClient.play(self.currentAudioSource)
+
+
     def __PlayQueue(self):
         while len(self.queue) > self.queuePosition and not self.stopPlaying:
             self.queue = os.listdir(self.musicFolder)
@@ -74,7 +81,7 @@ class MusicPlayer():
     def updateQueue(self):
         self.queue = []
         # self.queuePosition = 0
-        self.queue = os.listdir(self.musicFolder)
+        self.queue = os.listdir(self.musicFolder).reverse()
         pass
 
     def deleteTrack(self, id):
