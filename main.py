@@ -179,11 +179,13 @@ async def get_boobs(context: commands.context):
 
 @client.command(pass_context=True)
 async def setMangaDomain(context: commands.context, dmn):
+    global mangaDomain
     mangaDomain = dmn
     await context.channel.send(content= f'https://readmanga.{mangaDomain}')
 
 @client.command(pass_context=True)
 async def setAnimeDomain(context: commands.context, dmn):
+    global animeDomain
     animeDomain = dmn
     await context.channel.send(content= f'https://findanime.{animeDomain}')
 
