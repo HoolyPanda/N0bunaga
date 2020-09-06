@@ -43,62 +43,67 @@ async def ping(context):
 
 @client.command(pass_context=True)
 async def download(context:commands.context, url):
-    async def _download(url):
-        id = len(os.listdir(musicFolder))
-        if 'https://music.yandex.ru' in url:
-            clnt= captcha_key = captcha_answer = None
-            while not clnt:
-                try:
-                    clnt = Client.from_credentials(open('./login.cred').readline(), open('./password.cred').readline(), captcha_answer, captcha_key)
-                except yandex_music.exceptions.Captcha as e:
-                    e.captcha.download('captcha.png')
+    # async def _download(url):
+    id = len(os.listdir(musicFolder))
+    if 'https://music.yandex.ru' in url:
+        clnt= captcha_key = captcha_answer = None
+        while not clnt:
+            try:
+                clnt = Client.from_credentials(open('./login.cred').readline(), open('./password.cred').readline(), captcha_answer, captcha_key)
+            except yandex_music.exceptions.Captcha as e:
+                e.captcha.download('captcha.png')
 
-                    captcha_key = e.captcha.x_captcha_key
-                    captcha_answer = input('Число с картинки: ')
-            if 'track' in url:
-                await context.channel.send(content= f'Processing tack') 
-                tr = re.findall('\d+', f'{url}')
-                track = clnt.tracks([tr[1]])[0]
+                captcha_key = e.captcha.x_captcha_key
+                captcha_answer = input('Число с картинки: ')
+        if 'track' in url:
+            await context.channel.send(content= f'Processing tack') 
+            tr = re.findall('\d+', f'{url}')
+            track = clnt.tracks([tr[1]])[0]
+            def test():
                 clnt.tracks([tr[1]])[0].download(f'{musicFolder}/{id}.{track.title}.mp3')
-                mP.updateQueue()
-                await context.channel.send(content= f'track ready')
-            elif 'playlists' in url:
-                u = url[30:].split('/')[0]
-                album = re.findall('\d+', f'{url}')
-                t = ':'.join([u, album[0]])
-                album = clnt.playlists_list(playlist_ids=t)
-                await context.channel.send(content= f'Processing album {album.title}')
+            Thread(target=test).start()
+            mP.updateQueue()
+            await context.channel.send(content= f'track ready')
+        elif 'album' in url:
+            u = url[30:].split('/')[0]
+            album = re.findall('\d+', f'{url}')
+            t = ':'.join([u, album[0]])
+            album = clnt.playlists_list(playlist_ids=t)
+            await context.channel.send(content= f'Processing album {album.title}')
+            def test():
                 for volume in album.volumes:
                     for track in volume:
                         id = len(os.listdir(musicFolder))
                         track.download(f'{musicFolder}/{id}.{track.title}.mp3')
-                await context.channel.send(content= f'Album ready')
-                
-                pass
-            else: 
-                album = re.findall('\d+', f'{url}')
-                album = clnt.albumsWithTracks(album[0])
-                await context.channel.send(content= f'Processing album {album.title}')
-                for volume in album.volumes:
-                    for track in volume:
-                        id = len(os.listdir(musicFolder))
-                        track.download(f'{musicFolder}/{id}.{track.title}.mp3')
-                await context.channel.send(content= f'Album ready')
+            Thread(target=test).join()
+            await context.channel.send(content= f'Album ready')
+            
+            
             pass
-        else:
-            yt_dlOpts = {'format': 'bestaudio/mp3',
-                    'audio-quality': '9',
-                    'audio-format': 'mp3',
-                    'outtmpl': f'{os.getcwd()}/downloads/{id}.%(title)s.%(ext)s'
-                    }
-            with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
-                await context.channel.send(content= f'Processing tack') 
-                ydl.download([url])
-                mP.updateQueue()
-                await context.channel.send(content= f'track ready')
-            pass
-        t = Thread(target= _download, args=(context, url,))
-        t.start()
+        else: 
+            album = re.findall('\d+', f'{url}')
+            album = clnt.albumsWithTracks(album[0])
+            await context.channel.send(content= f'Processing album {album.title}')
+            for volume in album.volumes:
+                for track in volume:
+                    id = len(os.listdir(musicFolder))
+                    track.download(f'{musicFolder}/{id}.{track.title}.mp3')
+            await context.channel.send(content= f'Album ready')
+        pass
+    else:
+        yt_dlOpts = {'format': 'bestaudio/mp3',
+                'audio-quality': '9',
+                'audio-format': 'mp3',
+                'outtmpl': f'{os.getcwd()}/downloads/{id}.%(title)s.%(ext)s'
+                }
+        with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
+            await context.channel.send(content= f'Processing tack') 
+            ydl.download([url])
+            mP.updateQueue()
+            await context.channel.send(content= f'track ready')
+        pass
+        # t = Thread(target= _download, args=(context, url,))
+        # t.start()
 
 @client.command(pass_context=True)
 async def play(context:commands.context):
