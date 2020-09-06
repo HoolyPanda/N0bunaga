@@ -62,21 +62,6 @@ async def download(context:commands.context, url):
             Thread(target=test).start()
             mP.updateQueue()
             await context.channel.send(content= f'track ready')
-        elif 'album' in url:
-            u = url[30:].split('/')[0]
-            album = re.findall('\d+', f'{url}')
-            t = ':'.join([u, album[0]])
-            album = clnt.playlists_list(playlist_ids=t)
-            await context.channel.send(content= f'Processing album {album.title}')
-            def test():
-                for volume in album.volumes:
-                    for track in volume:
-                        id = len(os.listdir(musicFolder))
-                        track.download(f'{musicFolder}/{id}.{track.title}.mp3')
-            Thread(target=test).join()
-            await context.channel.send(content= f'Album ready')
-            
-            
             pass
         else: 
             album = re.findall('\d+', f'{url}')
@@ -87,7 +72,9 @@ async def download(context:commands.context, url):
                     for track in volume:
                         id = len(os.listdir(musicFolder))
                         track.download(f'{musicFolder}/{id}.{track.title}.mp3')
-            Thread(target=test).join()
+            t = Thread(target=test)
+            t.start()
+            t.join()
             await context.channel.send(content= f'Album ready')
         pass
     else:
