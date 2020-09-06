@@ -174,7 +174,7 @@ async def manga(context: commands.context):
     await context.channel.send(content= req.url)
 
 @client.command(pass_context=True)
-async def manga(context: commands.context):
+async def anime(context: commands.context):
     # animeDomain = 'live'
     req = requests.get(f'https://readmanga.{animeDomain}/internal/random')
     await context.channel.send(content= req.url)
