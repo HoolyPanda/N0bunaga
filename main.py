@@ -95,6 +95,14 @@ async def play(context:commands.context):
         mP.updateQueue()
         await context.channel.send(content=f'Больше нет треков')
 
+@client.command(pass_context=True)
+async def currentTrack(context: commands.context):
+    try:
+        await context.channel.send(content=f'Current track is {mP.currentTrack}')
+    except Exception as e:
+        await context.channel.send(content=f'Cannot define current track')
+
+
 
 @client.command(pass_context=True)
 async def pause(context: commands.context):
