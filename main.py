@@ -82,10 +82,12 @@ async def download(context:commands.context, url):
             album = re.findall('\d+', f'{url}')
             album = clnt.albumsWithTracks(album[0])
             await context.channel.send(content= f'Processing album {album.title}')
-            for volume in album.volumes:
-                for track in volume:
-                    id = len(os.listdir(musicFolder))
-                    track.download(f'{musicFolder}/{id}.{track.title}.mp3')
+            def test():
+                for volume in album.volumes:
+                    for track in volume:
+                        id = len(os.listdir(musicFolder))
+                        track.download(f'{musicFolder}/{id}.{track.title}.mp3')
+            Thread(target=test).join()
             await context.channel.send(content= f'Album ready')
         pass
     else:
@@ -96,7 +98,9 @@ async def download(context:commands.context, url):
                 }
         with youtube_dl.YoutubeDL(yt_dlOpts) as ydl:
             await context.channel.send(content= f'Processing tack') 
-            ydl.download([url])
+            def test():
+                ydl.download([url])
+            Thread(target=test).join()
             mP.updateQueue()
             await context.channel.send(content= f'track ready')
         pass
