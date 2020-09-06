@@ -24,7 +24,8 @@ __musicPlayer: Thread
 mP: MusicPlayer
 mP = MusicPlayer(None)
 musicQueue = []
-domain = 'live'
+mangaDomain = 'live'
+animeDomain = 'net'
 
 
 print(os.getcwd())
@@ -168,8 +169,14 @@ async def ls(context: commands.context):
 
 @client.command(pass_context=True)
 async def manga(context: commands.context):
-    domain = 'live'
-    req = requests.get(f'https://readmanga.{domain}/internal/random')
+    # mangaDomain = 'live'
+    req = requests.get(f'https://readmanga.{mangaDomain}/internal/random')
+    await context.channel.send(content= req.url)
+
+@client.command(pass_context=True)
+async def manga(context: commands.context):
+    # animeDomain = 'live'
+    req = requests.get(f'https://readmanga.{animeDomain}/internal/random')
     await context.channel.send(content= req.url)
 
 @client.command(pass_context=True)
@@ -179,10 +186,14 @@ async def get_boobs(context: commands.context):
     # await context.channel.send(content= req.url)
     
 @client.command(pass_context=True)
-async def set_domain(context: commands.context, dmn):
-    domain = dmn
-    await context.channel.send(content= f'https://readmanga.{domain}')
-    
+async def mangaDomain(context: commands.context, dmn):
+    mangaDomain = dmn
+    await context.channel.send(content= f'https://readmanga.{mangaDomain}')
+
+@client.command(pass_context=True)
+async def animeDomain(context: commands.context, dmn):
+    animeDomain = dmn
+    await context.channel.send(content= f'https://readmanga.{animeDomain}')
 
 @client.command(pass_context=True)
 async def torture(context:commands.context, name):
