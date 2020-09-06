@@ -69,6 +69,7 @@ class MusicPlayer():
         self.queue = []
         self.currentAudioSource = None
         self.currentTrack = ''
+        self.queuePosition = 0
 
     def updateQueue(self):
         self.queue = []
