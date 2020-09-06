@@ -18,6 +18,7 @@ class MusicPlayer():
     
     def __PlayQueue(self):
         while len(self.queue) > self.queuePosition and not self.stopPlaying:
+            self.queue = os.listdir(self.musicFolder)
             if not self.voiceClient.is_playing() and not self.isPaused:
                 try:
                     self.queuePosition += 1
@@ -70,7 +71,7 @@ class MusicPlayer():
 
     def updateQueue(self):
         self.queue = []
-        self.queuePosition = 0
+        # self.queuePosition = 0
         self.queue = os.listdir(self.musicFolder)
         pass
 
