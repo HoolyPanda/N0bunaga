@@ -27,12 +27,10 @@ musicQueue = []
 mangaDomain = 'live'
 animeDomain = 'net'
 
-
 print(os.getcwd())
 
 client: commands.Bot
 client = commands.Bot(command_prefix='self.')
-
 
 @client.event
 async def on_ready():
@@ -53,7 +51,6 @@ async def download(context:commands.context, url):
                 clnt = Client.from_credentials(open('./login.cred').readline(), open('./password.cred').readline(), captcha_answer, captcha_key)
             except yandex_music.exceptions.Captcha as e:
                 e.captcha.download('captcha.png')
-
                 captcha_key = e.captcha.x_captcha_key
                 captcha_answer = input('Число с картинки: ')
         if 'track' in url:
@@ -127,8 +124,6 @@ async def currentTrack(context: commands.context):
     except Exception as e:
         await context.channel.send(content=f'Cannot define current track')
 
-
-
 @client.command(pass_context=True)
 async def pause(context: commands.context):
     if mP:
@@ -176,15 +171,13 @@ async def manga(context: commands.context):
 @client.command(pass_context=True)
 async def anime(context: commands.context):
     # animeDomain = 'live'
-    req = requests.get(f'https://readmanga.{animeDomain}/internal/random')
+    req = requests.get(f'https://findanime.{animeDomain}/internal/random')
     await context.channel.send(content= req.url)
 
 @client.command(pass_context=True)
 async def get_boobs(context: commands.context):
     req = requests.get(f'https://tits-guru.com/randomTits')
-    # parsedReq = 
-    # await context.channel.send(content= req.url)
-    
+
 @client.command(pass_context=True)
 async def mangaDomain(context: commands.context, dmn):
     mangaDomain = dmn
