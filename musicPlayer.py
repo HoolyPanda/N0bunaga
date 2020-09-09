@@ -41,7 +41,7 @@ class MusicPlayer():
     def play(self):
         self.stopPlaying = False
         self.isPaused = False
-        self.queue = os.listdir(self.musicFolder)
+        # self.queue = os.listdir(self.musicFolder)
         if len(self.queue) > self.queuePosition:
             self.currentTrack = self.queue[self.queuePosition]
             self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
