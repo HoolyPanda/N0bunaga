@@ -38,10 +38,33 @@ async def on_ready():
 
 @client.command()
 async def ping(context):
+    """
+    test
+    """
     await context.send(f'Pong')
 
 @client.command(pass_context=True)
+async def help_command(context:commands.context):
+    msg =""" 
+    self.download <URL> - скачивает на сервер трек\альбом с яндекс музыки или ютуба
+    self.play - начинает воспроизведение
+    self.next - начинает воспроизведение следующего трека 
+    self.stop - останавливает воспроизведение
+    self.ls - выводит всю очередь треков
+    self.clear - очищает всю очередь
+    self.anime - отправляет ссылку на случайное аниме
+    self.manga - отправляет ссылку на случайную мангу
+    self.setAnimeDomain <domain> - (сервисная) меняет домен у сайта для аниме
+    self.setMangaDomain <domain> - (сервисная) меняет домен у сайта для манги
+    self.torture <user> - (сервисная) отправляет ползователя в пыточную и там пытает
+    """
+    # await context.au
+    await context.channel.send(content= f'{msg}')
+@client.command(pass_context=True)
 async def download(context:commands.context, url):
+    '''
+    self.download <URL> - скачивает на сервер трек\альбом с яндекс музыки или ютуба
+    '''
     id = len(os.listdir(musicFolder))
     if 'https://music.yandex.ru' in url:
         clnt= captcha_key = captcha_answer = None
@@ -96,6 +119,9 @@ async def download(context:commands.context, url):
 
 @client.command(pass_context=True)
 async def play(context:commands.context):
+    '''
+    self.play - начинает воспроизведение
+    '''
     voiceChannel = client.get_channel(context.message.author.voice.channel.id)
     try:
         vc = await voiceChannel.connect()
@@ -110,6 +136,8 @@ async def play(context:commands.context):
 
 @client.command(pass_context=True)
 async def currentTrack(context: commands.context):
+    '''
+    '''
     try:
         await context.channel.send(content=f'Current track is {mP.currentTrack}')
     except Exception as e:
@@ -117,20 +145,30 @@ async def currentTrack(context: commands.context):
 
 @client.command(pass_context=True)
 async def pause(context: commands.context):
+    '''
+    '''
     if mP:
         mP.pause()
 
 @client.command(pass_context=True)
 async def resume(context: commands.context):
+    '''
+    '''
     mP.resume()
 
 @client.command(pass_context=True)
 async def stop(context: commands.context):
+    '''
+    self.stop - останавливает воспроизведение
+    '''
     mP.stop()
     await mP.voiceClient.disconnect()
 
 @client.command(pass_context=True)
 async def next(context: commands.context):
+    '''
+    self.next - начинает воспроизведение следующего трека 
+    '''
     if not mP.next():
         mP.clearQueue()
         mP.updateQueue()
@@ -138,10 +176,16 @@ async def next(context: commands.context):
 
 @client.command(pass_context=True)
 async def clear(context: commands.context):
+    '''
+    self.clear - очищает всю очередь
+    '''
     mP.clearQueue()
 
 @client.command(pass_context=True)
 async def ls(context: commands.context):
+    '''
+    self.ls - выводит всю очередь треков
+    '''
     msg = ''
     if mP is None:
         await context.channel.send(content=f'Очередь пуста')
@@ -156,33 +200,48 @@ async def ls(context: commands.context):
 
 @client.command(pass_context=True)
 async def manga(context: commands.context):
+    '''
+    self.manga - отправляет ссылку на случайную мангу
+    '''
     # mangaDomain = 'live'
     req = requests.get(f'https://readmanga.{mangaDomain}/internal/random')
     await context.channel.send(content= req.url)
 
 @client.command(pass_context=True)
 async def anime(context: commands.context):
+    '''
+    self.anime - отправляет ссылку на случайное аниме
+    '''
     req = requests.get(f'https://findanime.{animeDomain}/internal/random')
     await context.channel.send(content= req.url)
 
-@client.command(pass_context=True)
+# @client.command(pass_context=True)
 async def get_boobs(context: commands.context):
     req = requests.get(f'https://tits-guru.com/randomTits')
 
 @client.command(pass_context=True)
 async def setMangaDomain(context: commands.context, dmn):
+    '''
+    self.setMangaDomain <domain> - (сервисная) меняет домен у сайта для манги
+    '''
     global mangaDomain
     mangaDomain = dmn
     await context.channel.send(content= f'https://readmanga.{mangaDomain}')
 
 @client.command(pass_context=True)
 async def setAnimeDomain(context: commands.context, dmn):
+    '''
+    self.setAnimeDomain <domain> - (сервисная) меняет домен у сайта для аниме
+    '''
     global animeDomain
     animeDomain = dmn
     await context.channel.send(content= f'https://findanime.{animeDomain}')
 
 @client.command(pass_context=True)
 async def torture(context:commands.context, name):
+    '''
+    self.torture <user> - (сервисная) отправляет ползователя в пыточную и там пытает
+    '''
     n = name
     print(n)
     for memebr in context.guild.members:
