@@ -18,7 +18,7 @@ testId = 698604865634435202
 tortUrl = f'https://www.youtube.com/watch?v=pBqyntzYaoQ'
 
 playMusic = False
-currentTrack = ''
+# currentTrack = ''
 musicFolder = f'{os.getcwd()}/downloads'
 __musicPlayer: Thread
 mP: MusicPlayer
@@ -42,7 +42,6 @@ async def ping(context):
 
 @client.command(pass_context=True)
 async def download(context:commands.context, url):
-    # async def _download(url):
     id = len(os.listdir(musicFolder))
     if 'https://music.yandex.ru' in url:
         clnt= captcha_key = captcha_answer = None
@@ -75,6 +74,7 @@ async def download(context:commands.context, url):
             t = Thread(target=test)
             t.start()
             t.join()
+            mP.updateQueue()
             await context.channel.send(content= f'Album ready')
         pass
     else:
@@ -93,8 +93,6 @@ async def download(context:commands.context, url):
             mP.updateQueue()
             await context.channel.send(content= f'track ready')
         pass
-        # t = Thread(target= _download, args=(context, url,))
-        # t.start()
 
 @client.command(pass_context=True)
 async def play(context:commands.context):
