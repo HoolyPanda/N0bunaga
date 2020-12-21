@@ -80,8 +80,10 @@ async def d(context:commands.context, url):
             await context.channel.send(content= f'Processing tack') 
             tr = re.findall('\d+', f'{url}')
             track = clnt.tracks([tr[1]])[0]
+            artist = track.artists[0].name
+
             def test():
-                clnt.tracks([tr[1]])[0].download(f'{musicFolder}/{id}.{track.title}.mp3')
+                clnt.tracks([tr[1]])[0].download(f'{musicFolder}/{id}.{track.title} by {artist}.mp3')
             Thread(target=test).start()
             mP.updateQueue()
             await context.channel.send(content= f'track ready')
@@ -134,10 +136,7 @@ async def p(context:commands.context):
     except Exception as e:
         pass
     mP.updateQueue()
-    await mP.play()
-    # if not await mP.play():
-        # mP.updateQueue()
-        # await context.channel.send(content=f'Больше нет треков')
+    mP.play()
 
 @client.command(pass_context=True)
 async def ct(context: commands.context):
@@ -173,7 +172,7 @@ async def n(context: commands.context):
     '''
     self.next - начинает воспроизведение следующего трека 
     '''
-    if not await mP.next():
+    if not mP.next():
         mP.clearQueue()
         mP.updateQueue()
         await context.channel.send(content=f'Больше нет треков')
