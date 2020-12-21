@@ -30,7 +30,7 @@ animeDomain = 'net'
 print(os.getcwd())
 
 client: commands.Bot
-client = commands.Bot(command_prefix='self.')
+client = commands.Bot(command_prefix='.')
 
 @client.event
 async def on_ready():
@@ -61,7 +61,8 @@ async def help_command(context:commands.context):
     # await context.au
     await context.channel.send(content= f'{msg}')
 @client.command(pass_context=True)
-async def download(context:commands.context, url):
+async def d(context:commands.context, url):
+    # TODO: artist in ct
     '''
     self.download <URL> - скачивает на сервер трек\альбом с яндекс музыки или ютуба
     '''
@@ -118,7 +119,10 @@ async def download(context:commands.context, url):
         pass
 
 @client.command(pass_context=True)
-async def play(context:commands.context):
+async def q(context:commands.context):
+    pass
+@client.command(pass_context=True)
+async def p(context:commands.context):
     '''
     self.play - начинает воспроизведение
     '''
@@ -130,12 +134,13 @@ async def play(context:commands.context):
     except Exception as e:
         pass
     mP.updateQueue()
-    if not mP.play():
-        mP.updateQueue()
-        await context.channel.send(content=f'Больше нет треков')
+    await mP.play()
+    # if not await mP.play():
+        # mP.updateQueue()
+        # await context.channel.send(content=f'Больше нет треков')
 
 @client.command(pass_context=True)
-async def currentTrack(context: commands.context):
+async def ct(context: commands.context):
     '''
     '''
     try:
@@ -157,29 +162,29 @@ async def resume(context: commands.context):
     mP.resume()
 
 @client.command(pass_context=True)
-async def stop(context: commands.context):
+async def s(context: commands.context):
     '''
     self.stop - останавливает воспроизведение
     '''
-    mP.stop()
-    await mP.voiceClient.disconnect()
+    await mP.stop()
 
 @client.command(pass_context=True)
-async def next(context: commands.context):
+async def n(context: commands.context):
     '''
     self.next - начинает воспроизведение следующего трека 
     '''
-    if not mP.next():
+    if not await mP.next():
         mP.clearQueue()
         mP.updateQueue()
         await context.channel.send(content=f'Больше нет треков')
+        await mP.voiceClient.disconnect()
 
 @client.command(pass_context=True)
-async def clear(context: commands.context):
+async def cl(context: commands.context):
     '''
     self.clear - очищает всю очередь
     '''
-    mP.clearQueue()
+    await mP.clearQueue()
 
 @client.command(pass_context=True)
 async def ls(context: commands.context):
@@ -238,7 +243,7 @@ async def setAnimeDomain(context: commands.context, dmn):
     await context.channel.send(content= f'https://findanime.{animeDomain}')
 
 @client.command(pass_context=True)
-async def torture(context:commands.context, name):
+async def t(context:commands.context, name):
     '''
     self.torture <user> - (сервисная) отправляет ползователя в пыточную и там пытает
     '''
@@ -251,7 +256,7 @@ async def torture(context:commands.context, name):
                     global mP
                     if not mP is None:
                         mP.clearQueue()
-                    await download(context, tortUrl)
+                    await d(context, tortUrl)
                     await memebr.move_to(c)
                     voiceClient = await client.get_channel(testId).connect()
                     mP = MusicPlayer(voiceClient)

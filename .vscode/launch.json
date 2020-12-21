@@ -9,7 +9,7 @@
             "name": "Python: Текущий файл",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "./main.py",
             "console": "integratedTerminal"
         }
     ]
