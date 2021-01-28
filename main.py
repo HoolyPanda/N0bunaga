@@ -15,7 +15,7 @@ import re
 token = open(f'./token.cred').readline()
 testUrl = f'https://www.youtube.com/watch?v=02Tim9kmb3I'
 testId = 698604865634435202
-tortUrl = f'https://www.youtube.com/watch?v=pBqyntzYaoQ'
+tortUrl = f'https://www.youtube.com/watch?v=fp7ZG5j0VJA'
 
 playMusic = False
 # currentTrack = ''
@@ -46,25 +46,24 @@ async def ping(context):
 @client.command(pass_context=True)
 async def help_command(context:commands.context):
     msg =""" 
-    self.download <URL> - скачивает на сервер трек\альбом с яндекс музыки или ютуба
-    self.play - начинает воспроизведение
-    self.next - начинает воспроизведение следующего трека 
-    self.stop - останавливает воспроизведение
-    self.ls - выводит всю очередь треков
-    self.clear - очищает всю очередь
-    self.anime - отправляет ссылку на случайное аниме
-    self.manga - отправляет ссылку на случайную мангу
-    self.setAnimeDomain <domain> - (сервисная) меняет домен у сайта для аниме
-    self.setMangaDomain <domain> - (сервисная) меняет домен у сайта для манги
-    self.torture <user> - (сервисная) отправляет ползователя в пыточную и там пытает
+    .d <URL> - скачивает на сервер трек\альбом с яндекс музыки или ютуба
+    .p - начинает воспроизведение
+    .n - начинает воспроизведение следующего трека 
+    .s - останавливает воспроизведение
+    .ls - выводит всю очередь треков
+    .cl - очищает всю очередь
+    .anime - отправляет ссылку на случайное аниме
+    .manga - отправляет ссылку на случайную мангу
+    .setAnimeDomain <domain> - (сервисная) меняет домен у сайта для аниме
+    .setMangaDomain <domain> - (сервисная) меняет домен у сайта для манги
+    .t <user> - (сервисная) отправляет ползователя в пыточную и там пытает
     """
     # await context.au
     await context.channel.send(content= f'{msg}')
 @client.command(pass_context=True)
 async def d(context:commands.context, url):
-    # TODO: artist in ct
     '''
-    self.download <URL> - скачивает на сервер трек\альбом с яндекс музыки или ютуба
+    .d <URL> - скачивает на сервер трек\альбом с яндекс музыки или ютуба
     '''
     id = len(os.listdir(musicFolder))
     if 'https://music.yandex.ru' in url:
@@ -126,7 +125,7 @@ async def q(context:commands.context):
 @client.command(pass_context=True)
 async def p(context:commands.context):
     '''
-    self.play - начинает воспроизведение
+    .p - начинает воспроизведение
     '''
     voiceChannel = client.get_channel(context.message.author.voice.channel.id)
     try:
@@ -134,9 +133,10 @@ async def p(context:commands.context):
         global mP
         mP.voiceClient = vc
     except Exception as e:
+        print(e)
         pass
     mP.updateQueue()
-    mP.play()
+    await mP.play()
 
 @client.command(pass_context=True)
 async def ct(context: commands.context):
@@ -172,7 +172,7 @@ async def n(context: commands.context):
     '''
     self.next - начинает воспроизведение следующего трека 
     '''
-    if not mP.next():
+    if not await mP.next():
         mP.clearQueue()
         mP.updateQueue()
         await context.channel.send(content=f'Больше нет треков')
@@ -183,7 +183,7 @@ async def cl(context: commands.context):
     '''
     self.clear - очищает всю очередь
     '''
-    await mP.clearQueue()
+    mP.clearQueue()
 
 @client.command(pass_context=True)
 async def ls(context: commands.context):
@@ -255,10 +255,11 @@ async def t(context:commands.context, name):
                     global mP
                     if not mP is None:
                         mP.clearQueue()
-                    await d(context, tortUrl)
-                    await memebr.move_to(c)
-                    voiceClient = await client.get_channel(testId).connect()
-                    mP = MusicPlayer(voiceClient)
-                    mP.play()
+                    else:
+                        await d(context, tortUrl)
+                        await memebr.move_to(c)
+                        voiceClient = await client.get_channel(testId).connect()
+                        mP = MusicPlayer(voiceClient)
+                        await mP.play()
 
 client.run(token)

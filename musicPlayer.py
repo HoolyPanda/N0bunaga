@@ -42,41 +42,66 @@ class MusicPlayer():
                 except Exception as e:
                     break
 
-    def CheckQueue(self):
+    async def CheckQueue(self):
         self.updateQueue()
         if len(self.queue) > self.queuePosition:
             self.currentTrack = self.queue[self.queuePosition]
             self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
-            if not self.voiceClient.is_playing():
-                return self.play_next()
-        else:
+            return await self.play_next()
 
-            return False
+    def get_next_track(self):
+        self.updateQueue()
+        self.voiceClient.stop()
+        if len(self.queue) > self.queuePosition:
+            self.currentTrack = self.queue[self.queuePosition]
+            self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
+            if len(self.queue) -1>= self.queuePosition:
+                if self.voiceClient is None: print("VC NONE")
+                try:
+                    self.queuePosition += 1
+                    if len(self.queue) <= self.queuePosition:
+                        self.clearQueue()
+                        self.voiceClient.stop()
+                        # self.quit()
+                    else:
+                        self.currentTrack = self.queue[self.queuePosition]
+                        self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
+                        self.voiceClient.play(self.currentAudioSource, after= lambda x: self.get_next_track())
+                except Exception as e:
+                    print(e)
+                    pass
 
 
-    def play_next(self):
+    async def play_next(self):
         if len(self.queue) -1>= self.queuePosition and not self.stopPlaying:
             self.queue = self.updateQueue()
             self.updateQueue()
-            if not self.voiceClient.is_playing() and not self.isPaused:
-                try:
-                    self.queuePosition += 1
-                    if len(self.queue) > 0:
-                        self.currentTrack = self.queue[self.queuePosition]
-                        self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
-                        if not self.voiceClient.is_playing():
-                            self.voiceClient.play(self.currentAudioSource, after=lambda x: self.next())
-                            return True
-                except Exception as e:
-                    pass
-        elif self.stopPlaying: return True 
-        elif len(self.queue) -1 <= self.queuePosition:
-            asyncio.run(self.quit())
-            return False
+            if self.voiceClient is None: print("VC NONE")
+            try:
+                self.queuePosition += 1
+                if len(self.queue) <= self.queuePosition:
+                    self.clearQueue()
+                    self.voiceClient.stop()
 
-    def play(self):
+                    # await self.voiceClient.disconnect()
+                    # await self.quit()
+                    return False
+                else:
+                    try:
+                        await self.stop()
+                    except: pass
+                    self.currentTrack = self.queue[self.queuePosition]
+                    self.currentAudioSource = discord.FFmpegPCMAudio(f'{self.musicFolder}/{self.currentTrack}')
+                    self.voiceClient.play(self.currentAudioSource, after= lambda x: self.get_next_track())
+                    return True
+            except Exception as e:
+                print(e)
+                pass
+        elif self.stopPlaying: return True 
+
+    async def play(self):
         self.stopPlaying = self.isPaused = False
-        return self.CheckQueue()
+        return await self.CheckQueue()
 
     def pause(self):
         self.isPaused = True
@@ -88,27 +113,23 @@ class MusicPlayer():
     
     async def stop(self):
         self.stopPlaying = True
-        self.voiceClient.stop()
+        await self.voiceClient.stop()
         # await self.voiceClient.disconnect()
         self.currentTrack = ''
 
     async def quit(self):
         self.stopPlaying = True
-        self.clearQueue()
+        await self.clearQueue()
         await self.voiceClient.disconnect()
 
 
-    async def clearQueue(self):
-        try:
-            await self.stop()
-        except Exception as e:
-            pass
+    def clearQueue(self):
         for t in self.queue:
             os.remove(f'{self.musicFolder}/{t}')
         self.queue = []
         self.currentAudioSource = None
         self.currentTrack = ''
-        self.queuePosition = 0
+        self.queuePosition = -1
 
     def updateQueue(self):
         def _sortKey(arg):
@@ -125,10 +146,10 @@ class MusicPlayer():
 
         pass
 
-    def next(self):
-        self.stop()
+    async def next(self):
+        await self.stop()
         self.updateQueue()
-        return self.play()
+        return await self.play()
         # self.queue.pop(0)
         # self.queuePosition += 1
         # return self.play_next()
