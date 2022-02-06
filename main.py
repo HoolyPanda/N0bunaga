@@ -12,7 +12,7 @@ import bs4
 import re
 
 
-token = open(f'./token.cred').readline()
+token = open(f'./token.cred').readline().replace("\n","")
 testUrl = f'https://www.youtube.com/watch?v=02Tim9kmb3I'
 testId = 698604865634435202
 tortUrl = f'https://www.youtube.com/watch?v=fp7ZG5j0VJA'
@@ -70,7 +70,7 @@ async def d(context:commands.context, url):
         clnt= captcha_key = captcha_answer = None
         while not clnt:
             try:
-                clnt = Client.from_credentials(open('./login.cred').readline(), open('./password.cred').readline(), captcha_answer, captcha_key)
+                clnt = Client.from_credentials(open('./login.cred').readline().replace("\n",""), open('./password.cred').readline().replace("\n",""), captcha_answer, captcha_key)
             except yandex_music.exceptions.Captcha as e:
                 e.captcha.download('captcha.png')
                 captcha_key = e.captcha.x_captcha_key
